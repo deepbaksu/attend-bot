@@ -1,8 +1,11 @@
 import datetime
 import random
+import logging
 
 from flask import Flask, jsonify, request
 from pytz import timezone, utc
+
+logging.basicConfig(level=logging.INFO)
 
 KST = timezone("Asia/Seoul")
 app = Flask(__name__)
@@ -10,8 +13,12 @@ app = Flask(__name__)
 with open("slack_bot/saying.txt", encoding="utf-8") as f:
     lines = f.readlines()
 
+
 @app.route("/attend", methods=["GET", "POST"])
 def attend():
+
+    logging.info("Received request.form = %s", request.form)
+
     now = datetime.datetime.utcnow()
     kr_time = utc.localize(now).astimezone(KST)
     # 윈도우에서는 strftime을 이용하여 날짜형태를 변경하고 한글을 결합할 경우
@@ -36,6 +43,8 @@ def attend():
         "response_type": "in_channel",
         "text": text,
     }
+
+    logging.info("Sending a response back %s", msg)
 
     return jsonify(msg)
 
