@@ -6,6 +6,8 @@ from pytz import timezone, utc
 
 KST = timezone('Asia/Seoul')
 app = Flask(__name__)
+f = open('saying.txt', encoding='utf-8')
+lines = f.readlines()
 
 @app.route('/attend', methods=['GET', 'POST'])
 def attend():
@@ -17,14 +19,12 @@ def attend():
     # Korean + time.strftime() 문제해결을 위해 다음의 링크를 참고하였습니다.
     # https://hcid-courses.github.io/TA/QnA/issues_with_windows_korean_strftime.html
 
-    with open('saying.txt', encoding='utf-8') as f:
-        lines = f.readlines()
-        msg = {
-                "response_type": "in_channel",
-                "text":'*'+request.form['user_name'] + '님 출석체크* \n' + \
-                kr_time.strftime('%m월 %d일 출근시간은 한국시각기준 %H시 %M분입니다.\n\n'.encode('unicode-escape').decode()).encode().decode('unicode-escape') + \
+    msg = {
+            "response_type": "in_channel",
+            "text":'*'+request.form['user_name'] + '님 출석체크* \n' + \
+            kr_time.strftime('%m월 %d일 출근시간은 한국시각기준 %H시 %M분입니다.\n\n'.encode('unicode-escape').decode()).encode().decode('unicode-escape') + \
 
-                random.choice(lines)+'\n\n'} 
+            random.choice(lines)+'\n\n'} 
 
     return jsonify(msg)
 
