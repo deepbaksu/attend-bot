@@ -3,16 +3,13 @@ from flask import Flask
 from flask import request, Response
 import datetime
 from pytz import timezone, utc
+from slack import WebClient
+from slack.errors import SlackApiError
 
+client = WebClient(token='xoxb-288745980535-1375995619957-foQqQXR7IUNBwofXwce9Z9Fr')
 KST = timezone('Asia/Seoul')
 now = datetime.datetime.utcnow()
 kr_time = utc.localize(now).astimezone(KST)
-
-
-def send_slack(msg):
-    res = requests.post('https://hooks.slack.com/services/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', json={
-        'text' : msg
-    }, headers={'Content-Type': 'application/json'})
 
 app = Flask(__name__)
 
@@ -25,9 +22,10 @@ def attend():
         str(kr_time).split('.')[0].split(' ')[1].split(':')[0] + '시 ' + \
         str(kr_time).split('.')[0].split(' ')[1].split(':')[1] + '분입니다.\n' + '존버는 승리합니다.\n\n'
 
-    send_slack(msg)
+    client.chat_postMessage(channel='#attend', text=msg, headers= {'User-Agent' : 'Chrome/66.0.3359.181'})
 
-    resp = Response(response=None, status=200, mimetype="application/json")
+    
+    resp = Response(response=None, status=200, mimetype="application/json", headers= {'User-Agent' : 'Chrome/66.0.3359.181'})
     return resp
 
 if __name__ == "__main__":
