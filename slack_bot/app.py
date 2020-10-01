@@ -7,7 +7,7 @@ from pytz import timezone, utc
 KST = timezone("Asia/Seoul")
 app = Flask(__name__)
 
-with open("saying.txt", encoding="utf-8") as f:
+with open("slack_bots/saving.txt", encoding="utf-8") as f:
     lines = f.readlines()
 
 @app.route("/attend", methods=["GET", "POST"])
