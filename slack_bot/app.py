@@ -1,11 +1,14 @@
-from flask import Flask, jsonify
-from flask import request
 import datetime
+import random
+
+from flask import Flask, jsonify, request
 from pytz import timezone, utc
 
 KST = timezone("Asia/Seoul")
 app = Flask(__name__)
 
+with open("saying.txt", encoding="utf-8") as f:
+    lines = f.readlines()
 
 @app.route("/attend", methods=["GET", "POST"])
 def attend():
@@ -29,7 +32,7 @@ def attend():
     text = f"""*{username}님 출석체크*
 {datetime_msg}
 
-존버는 승리합니다.
+{random.choice(lines)}
 """
 
     msg = {
