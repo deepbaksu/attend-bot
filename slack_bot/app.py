@@ -1,4 +1,3 @@
-import requests
 from flask import Flask, jsonify
 from flask import request, Response
 import datetime
