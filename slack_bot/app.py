@@ -3,10 +3,7 @@ from flask import Flask, jsonify
 from flask import request, Response
 import datetime
 from pytz import timezone, utc
-from slack import WebClient
-from slack.errors import SlackApiError
 
-client = WebClient(token='xoxb-288745980535-1375995619957-foQqQXR7IUNBwofXwce9Z9Fr')
 KST = timezone('Asia/Seoul')
 now = datetime.datetime.utcnow()
 kr_time = utc.localize(now).astimezone(KST)
