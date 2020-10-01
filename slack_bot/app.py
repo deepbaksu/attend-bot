@@ -6,8 +6,8 @@ from pytz import timezone, utc
 
 KST = timezone('Asia/Seoul')
 app = Flask(__name__)
-f = open('saying.txt', encoding='utf-8')
-lines = f.readlines()
+with open('saying.txt', encoding='utf-8') as f:
+    lines = f.readlines()
 
 @app.route('/attend', methods=['GET', 'POST'])
 def attend():
