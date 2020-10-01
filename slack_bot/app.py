@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from flask import request, Response
+from flask import request
 import datetime
 from pytz import timezone, utc
 
