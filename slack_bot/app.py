@@ -9,12 +9,14 @@ app = Flask(__name__)
 
 with open("slack_bot/saying.txt", encoding="utf-8") as f:
     lines = f.readlines()
+    print('lines : ' + lines)
 
 @app.route("/attend", methods=["GET", "POST"])
 def attend():
     now = datetime.datetime.utcnow()
+    print('now : ' + now)
     kr_time = utc.localize(now).astimezone(KST)
-
+    print('kr_time : ' + kr_time)
     # 윈도우에서는 strftime을 이용하여 날짜형태를 변경하고 한글을 결합할 경우
     # UnicodeEncodeError 및 Invalid format string 오류가 발생할 수 있습니다.
     # Korean + time.strftime() 문제해결을 위해 다음의 링크를 참고하였습니다.
@@ -28,13 +30,13 @@ def attend():
     )
 
     username = request.form["user_name"]
-
+    print('username'+ username)
     text = f"""*{username}님 출석체크*
 {datetime_msg}
 
 {random.choice(lines)}
 """
-
+    print('text : ' + text)
     msg = {
         "response_type": "in_channel",
         "text": text,
