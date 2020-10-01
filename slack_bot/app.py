@@ -8,13 +8,13 @@ from slack.errors import SlackApiError
 
 client = WebClient(token='xoxb-288745980535-1375995619957-foQqQXR7IUNBwofXwce9Z9Fr')
 KST = timezone('Asia/Seoul')
-now = datetime.datetime.utcnow()
-kr_time = utc.localize(now).astimezone(KST)
-
 app = Flask(__name__)
 
 @app.route('/attend', methods=['GET', 'POST'])
 def attend():
+    now = datetime.datetime.utcnow()
+    kr_time = utc.localize(now).astimezone(KST)
+
     msg = \
         '*'+request.form['user_name'] + '님 출석체크* \n' + str(kr_time).split('.')[0].split(' ')[0].split('-')[1] + '월 '+ \
         str(kr_time).split('.')[0].split(' ')[0].split('-')[2] + '일 '+ \
