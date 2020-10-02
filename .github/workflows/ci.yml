@@ -17,4 +17,5 @@ jobs:
         with:
           python-version: "3.8"
       - uses: dschep/install-pipenv-action@v1
+      - run: pipenv install --dev
       - run: pipenv run pytest
