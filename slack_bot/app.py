@@ -1,6 +1,6 @@
 import datetime
-import random
 import logging
+import random
 
 from flask import Flask, jsonify, request
 from pytz import timezone, utc
@@ -41,6 +41,11 @@ def get_message(date: datetime, username: str, quote: str) -> str:
 
 {quote}
 """
+
+
+@app.route("/healthcheck", methods=["GET"])
+def healthcheck():
+    return "ok"
 
 
 @app.route("/attend", methods=["GET", "POST"])
