@@ -1,12 +1,12 @@
+import datetime
+import json
 import os
 import tempfile
 
 import flask
-import datetime
-import pytz
-
 import pytest
-import json
+import pytz
+import werkzeug.test
 
 from slack_bot.app import app, get_message
 
@@ -24,14 +24,21 @@ def client():
 
 
 def test_attend(client):
-    """Start with a blank database."""
+    """POST /attend should return 출석체크"""
 
     rv = client.post("/attend", data=dict(user_name="kkweon"))
 
     data = json.loads(rv.data)
 
-    assert data["response_type"] == "in_channel"
+    assert "in_channel" == data["response_type"]
     assert "*kkweon님 출석체크*" in data["text"]
+
+
+def test_healthcheck(client: werkzeug.test.Client):
+    """GET /healthcheck should return ok and 200"""
+    rv = client.get("/healthcheck")
+    assert 200 == rv.status_code
+    assert b"ok" == rv.data
 
 
 def test_get_message():
