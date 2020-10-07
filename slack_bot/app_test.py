@@ -26,12 +26,20 @@ def client():
 def test_attend(client):
     """POST /attend should return 출석체크"""
 
-    rv = client.post("/attend", data=dict(user_name="kkweon"))
+    rv = client.post("/attend", data=dict(user_name="kkweon", channel_name="attend"))
 
     data = json.loads(rv.data)
 
     assert "in_channel" == data["response_type"]
     assert "*kkweon님 출석체크*" in data["text"]
+
+
+def test_attend_with_wrong_channel(client):
+    rv = client.post(
+        "/attend", data=dict(user_name="kkweon", channel_name="wrong_channel")
+    )
+
+    assert "출석체크는 다음 채널에서만 사용 가능합니다: #attend" == rv.data.decode("utf-8")
 
 
 def test_healthcheck(client: werkzeug.test.Client):
