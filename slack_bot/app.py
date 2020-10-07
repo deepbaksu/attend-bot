@@ -1,6 +1,7 @@
 import datetime
 import logging
 import random
+from typing import Iterable
 
 from flask import Flask, jsonify, request
 from pytz import timezone, utc
@@ -9,6 +10,8 @@ logging.basicConfig(level=logging.INFO)
 
 KST = timezone("Asia/Seoul")
 app = Flask(__name__)
+
+supported_channels = {"attend"}
 
 with open("slack_bot/saying.txt", encoding="utf-8") as f:
     lines = f.readlines()
@@ -48,10 +51,30 @@ def healthcheck():
     return "ok"
 
 
+def get_channel_names(channel_names: Iterable[str]) -> str:
+    """Returns comma separated names after switching to channel.
+
+    Args:
+        channel_names: channel names
+
+    Returns:
+        It returns a string that all channel names are concatenated.
+
+    >>> get_channel_names({ "attend", "channel1" })
+    "#attend, #channel1"
+    """
+    return ", ".join(map(lambda name: f"#{name}", channel_names))
+
+
 @app.route("/attend", methods=["GET", "POST"])
 def attend():
 
     logging.info("Received request.form = %s", request.form)
+
+    channel_name = request.form["channel_name"]
+
+    if channel_name not in supported_channels:
+        return f"출석체크는 다음 채널에서만 사용 가능합니다: {get_channel_names(supported_channels)}"
 
     now = datetime.datetime.utcnow()
     kr_time = utc.localize(now).astimezone(KST)
