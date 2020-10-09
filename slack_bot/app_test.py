@@ -71,7 +71,7 @@ def test_attend_with_wrong_channel(client):
         ATTEND, data=dict(user_name="kkweon", channel_name="wrong_channel")
     )
 
-    assert "출석체크는 다음 채널에서만 사용 가능합니다: #attend" == rv.data.decode("utf-8")
+    assert "출석체크는 다음 채널에서만 사용 가능합니다:" in rv.data.decode("utf-8")
 
 
 def test_healthcheck(client: werkzeug.test.Client):

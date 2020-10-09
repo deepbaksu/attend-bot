@@ -39,5 +39,6 @@ class Attendance(db.Model):
             Attendance.query.filter(target_date <= Attendance.timestamp)
             .filter(Attendance.timestamp < target_date + datetime.timedelta(days=1))
             .order_by(Attendance.timestamp)
+            .group_by(Attendance.user_id)
             .limit(n)
         )
