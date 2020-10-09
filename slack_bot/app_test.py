@@ -9,6 +9,7 @@ import pytz
 import werkzeug.test
 
 from slack_bot import app, db
+from slack_bot.config import TestConfig
 from slack_bot.routes import get_message
 from slack_bot.models import Attendance, User
 
@@ -17,6 +18,7 @@ ATTEND = "/attend"
 
 @pytest.fixture
 def client():
+    app.config.from_object(TestConfig)
     app.config["TESTING"] = True
 
     db.create_all()

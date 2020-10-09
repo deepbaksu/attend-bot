@@ -9,12 +9,14 @@ from pytz import utc
 from slack_bot import app, supported_channels, KST, db, lines
 from slack_bot.models import User, Attendance
 
+NEWLINE = "\n"
+
 
 def get_message(
-    date: datetime,
-    username: str,
-    quote: str,
-    attendances: Optional[Iterable[Attendance]] = None,
+        date: datetime,
+        username: str,
+        quote: str,
+        attendances: Optional[Iterable[Attendance]] = None,
 ) -> str:
     """Returns Slack formatted message
 
@@ -35,21 +37,28 @@ def get_message(
         date.strftime(
             "%m월 %d일 출근시간은 한국시각기준 %H시 %M분입니다.".encode("unicode-escape").decode()
         )
-        .encode()
-        .decode("unicode-escape")
+            .encode()
+            .decode("unicode-escape")
     )
 
-    attendance_list = []
+    if attendances:
+        attendance_list = []
 
-    for idx, att in enumerate(attendances):
-        attendance_list.append(
-            f"{idx + 1}. {att.user.username} {att.timestamp.astimezone(KST).strftime('%H:%M')}"
-        )
+        for idx, att in enumerate(attendances):
+            attendance_list.append(
+                f"{idx + 1}. {att.user.username} {att.timestamp.astimezone(KST).strftime('%H:%M')}"
+            )
+
+        return f"""*{username}님 출석체크*
+    {datetime_msg}
+
+    {NEWLINE.join(attendance_list)}
+
+    {quote}
+    """
 
     return f"""*{username}님 출석체크*
 {datetime_msg}
-
-{attendance_list}
 
 {quote}
 """
@@ -90,6 +99,8 @@ def attend():
     kr_time: datetime.datetime = utc.localize(now).astimezone(KST)
 
     text = request.form.get("text")
+
+    attendances = None
 
     if text == "test":
         user_id = request.form.get("user_id")
