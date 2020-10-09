@@ -8,25 +8,26 @@ import pytest
 import pytz
 import werkzeug.test
 
-from slack_bot.app import app, get_message
+from slack_bot import app, db
+from slack_bot.routes import get_message
+from slack_bot.models import Attendance, User
+
+ATTEND = "/attend"
 
 
 @pytest.fixture
 def client():
-    db_fd, app.config["DATABASE"] = tempfile.mkstemp()
     app.config["TESTING"] = True
+
+    db.create_all()
 
     with app.test_client() as client:
         yield client
 
-    os.close(db_fd)
-    os.unlink(app.config["DATABASE"])
-
 
 def test_attend(client):
     """POST /attend should return 출석체크"""
-
-    rv = client.post("/attend", data=dict(user_name="kkweon", channel_name="attend"))
+    rv = client.post(ATTEND, data=dict(user_name="kkweon", channel_name="attend"))
 
     data = json.loads(rv.data)
 
@@ -34,9 +35,38 @@ def test_attend(client):
     assert "*kkweon님 출석체크*" in data["text"]
 
 
+def test_attend_test(client):
+    beg = datetime.datetime.now()
+
+    rv = client.post(
+        ATTEND,
+        data=dict(
+            text="test", user_id="1234", user_name="kkweon", channel_name="attend"
+        ),
+    )
+
+    data = json.loads(rv.data)
+
+    assert "in_channel" == data["response_type"]
+    assert "*kkweon님 출석체크*" in data["text"]
+
+    user = User.query.filter(User.id == "1234").first()
+    assert user is not None
+    assert "1234" == user.id
+    assert "kkweon" == user.username
+
+    attendances = Attendance.query.all()
+    assert len(attendances) == 1
+
+    a: Attendance = attendances[0]
+
+    assert a.user == user
+    assert a.timestamp > beg
+
+
 def test_attend_with_wrong_channel(client):
     rv = client.post(
-        "/attend", data=dict(user_name="kkweon", channel_name="wrong_channel")
+        ATTEND, data=dict(user_name="kkweon", channel_name="wrong_channel")
     )
 
     assert "출석체크는 다음 채널에서만 사용 가능합니다: #attend" == rv.data.decode("utf-8")

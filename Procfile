@@ -1,1 +1,1 @@
-web: gunicorn slack_bot.app:app
+web: gunicorn slack_bot:app
