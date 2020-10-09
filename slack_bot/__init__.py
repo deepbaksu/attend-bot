@@ -15,7 +15,7 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-supported_channels = {"attend"}
+supported_channels = {"attend", "test-channel-for-bots"}
 
 with open("slack_bot/saying.txt", encoding="utf-8") as f:
     lines = f.readlines()
