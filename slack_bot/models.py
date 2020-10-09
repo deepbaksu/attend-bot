@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Iterable
+from typing import List, Iterable, Tuple
 
 from sqlalchemy import cast, Date, func
 from sqlalchemy.orm import load_only
@@ -35,13 +35,19 @@ class Attendance(db.Model):
         )
 
     @staticmethod
-    def get_earliest_n(n: int, target_date: datetime.date) -> Iterable[Attendance]:
-        return (
-            Attendance.query.options(load_only(Attendance.user_id, Attendance.timestamp)).filter(
-                target_date <= Attendance.timestamp)
-                .filter(Attendance.timestamp < target_date + datetime.timedelta(days=1))
-                .order_by(Attendance.timestamp)
-                .group_by(Attendance.user_id)
-                .limit(n)
-
+    def get_earliest_n(
+            n: int, target_date: datetime.date
+    ) -> Iterable[Attendance]:
+        subquery = (Attendance.query.with_entities(
+            Attendance.user_id, func.min(Attendance.timestamp).label("min_timestamp")
         )
+                    .filter(target_date <= Attendance.timestamp)
+                    .filter(Attendance.timestamp < target_date + datetime.timedelta(days=1))
+                    .group_by(Attendance.user_id)
+                    .order_by("min_timestamp")
+                    .limit(n)
+                    .subquery()
+                    )
+
+        return Attendance.query.filter(Attendance.user_id == subquery.c.user_id).filter(
+            Attendance.timestamp == subquery.c.min_timestamp)
