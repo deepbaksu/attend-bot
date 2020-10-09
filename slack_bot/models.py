@@ -20,24 +20,11 @@ class User(db.Model):
         return "User(id=%r, username=%r)" % (self.id, self.username)
 
 
-class UnixEpoch(TypeDecorator):
-    impl = db.Integer
-
-    def __init__(self):
-        TypeDecorator.__init__(self)
-
-    def process_bind_param(self, value: datetime.datetime, dialect):
-        return value.astimezone(tz=pytz.utc).timestamp() * 1000
-
-    def process_result_value(self, value, dialect):
-        return datetime.datetime.utcfromtimestamp(value / 1000)
-
-
 class Attendance(db.Model):
     __tablename__ = "attendances"
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    timestamp = db.Column(UnixEpoch, index=True, nullable=False)
+    timestamp = db.Column(db.TIMESTAMP(timezone=True), index=True, nullable=False)
     user_id = db.Column(db.String, db.ForeignKey("users.id"), nullable=False)
 
     user = db.relationship("User")
