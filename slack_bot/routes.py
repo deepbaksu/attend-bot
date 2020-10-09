@@ -46,16 +46,17 @@ def get_message(
 
         for idx, att in enumerate(attendances):
             attendance_list.append(
-                f"{idx + 1}. {att.user.username} {att.timestamp.astimezone(KST).strftime('%H:%M')}"
+                f"{idx + 1}. {att.user.username} {att.timestamp.astimezone(KST).strftime('%I:%M %p')}"
             )
 
         return f"""*{username}님 출석체크*
-    {datetime_msg}
+{datetime_msg}
 
-    {NEWLINE.join(attendance_list)}
+*출석 순위*
+{NEWLINE.join(attendance_list)}
 
-    {quote}
-    """
+{quote}
+"""
 
     return f"""*{username}님 출석체크*
 {datetime_msg}
