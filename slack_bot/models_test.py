@@ -33,3 +33,6 @@ def test_n(test_db: SQLAlchemy):
 
     ret = Attendance.get_earliest_n(2, dt.date())
     assert list(ret) == [a1_2, a2]
+
+    ret = Attendance.get_earliest_n(2, dt.date() + timedelta(days=1))
+    assert list(ret) == []
