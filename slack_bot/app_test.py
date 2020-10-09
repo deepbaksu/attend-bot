@@ -31,10 +31,7 @@ def test_attend(client):
     beg = datetime.datetime.now()
 
     rv = client.post(
-        ATTEND,
-        data=dict(
-            user_id="1234", user_name="kkweon", channel_name="attend"
-        ),
+        ATTEND, data=dict(user_id="1234", user_name="kkweon", channel_name="attend"),
     )
 
     data = json.loads(rv.data)

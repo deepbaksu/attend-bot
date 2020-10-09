@@ -13,10 +13,10 @@ NEWLINE = "\n"
 
 
 def get_message(
-        date: datetime,
-        username: str,
-        quote: str,
-        attendances: Optional[Iterable[Attendance]] = None,
+    date: datetime,
+    username: str,
+    quote: str,
+    attendances: Optional[Iterable[Attendance]] = None,
 ) -> str:
     """Returns Slack formatted message
 
@@ -37,8 +37,8 @@ def get_message(
         date.strftime(
             "%m월 %d일 출근시간은 한국시각기준 %H시 %M분입니다.".encode("unicode-escape").decode()
         )
-            .encode()
-            .decode("unicode-escape")
+        .encode()
+        .decode("unicode-escape")
     )
 
     if attendances:
