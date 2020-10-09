@@ -43,7 +43,6 @@ def test_n(test_db: SQLAlchemy):
     ret = Attendance.get_earliest_n(2, base_date + timedelta(days=1))
     assert list(ret) == []
 
-    ###
     a1_nextday = Attendance(
         timestamp=dt + timedelta(days=1, seconds=1), user_id=user1.id
     )

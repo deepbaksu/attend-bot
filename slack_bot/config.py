@@ -1,8 +1,8 @@
-from slack_bot.database import get_database_uri
+import os
 
 
 class Config(object):
-    SQLALCHEMY_DATABASE_URI = get_database_uri()
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
