@@ -21,6 +21,7 @@ def client():
     app.config.from_object(TestConfig)
     app.config["TESTING"] = True
 
+    db.drop_all()
     db.create_all()
 
     with app.test_client() as client:

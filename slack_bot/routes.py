@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import logging
 import random
 from typing import Iterable, Optional
@@ -96,8 +96,7 @@ def attend():
     if channel_name not in supported_channels:
         return f"출석체크는 다음 채널에서만 사용 가능합니다: {get_channel_names(supported_channels)}"
 
-    now = datetime.datetime.utcnow()
-    kr_time: datetime.datetime = utc.localize(now).astimezone(KST)
+    kr_time: datetime = datetime.now().astimezone(KST)
 
     user_id = request.form.get("user_id")
     user_name = request.form.get("user_name")
@@ -113,7 +112,9 @@ def attend():
     db.session.add(a)
     db.session.commit()
 
-    attendances = Attendance.get_earliest_n(5, kr_time.date())
+    base_time = datetime.combine(kr_time.date(), datetime.min.time())
+
+    attendances = Attendance.get_earliest_n(5, base_time)
 
     msg = {
         "response_type": "in_channel",
