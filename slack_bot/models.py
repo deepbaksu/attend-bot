@@ -1,7 +1,8 @@
 from __future__ import annotations
 from typing import List, Iterable
 
-from sqlalchemy import cast, Date
+from sqlalchemy import cast, Date, func
+from sqlalchemy.orm import load_only
 
 from slack_bot import db
 import datetime
@@ -36,9 +37,11 @@ class Attendance(db.Model):
     @staticmethod
     def get_earliest_n(n: int, target_date: datetime.date) -> Iterable[Attendance]:
         return (
-            Attendance.query.filter(target_date <= Attendance.timestamp)
-            .filter(Attendance.timestamp < target_date + datetime.timedelta(days=1))
-            .order_by(Attendance.timestamp)
-            .group_by(Attendance.user_id)
-            .limit(n)
+            Attendance.query.options(load_only(Attendance.user_id, Attendance.timestamp)).filter(
+                target_date <= Attendance.timestamp)
+                .filter(Attendance.timestamp < target_date + datetime.timedelta(days=1))
+                .order_by(Attendance.timestamp)
+                .group_by(Attendance.user_id)
+                .limit(n)
+
         )
