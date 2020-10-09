@@ -20,7 +20,7 @@ class User(db.Model):
 class Attendance(db.Model):
     __tablename__ = "attendances"
 
-    id = db.Column(db.Integer, db.Sequence("attendance_id_seq"), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     timestamp = db.Column(db.DateTime, index=True, nullable=False)
     user_id = db.Column(db.String, db.ForeignKey("users.id"), nullable=False)
 
