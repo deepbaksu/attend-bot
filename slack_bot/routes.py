@@ -13,10 +13,10 @@ NEWLINE = "\n"
 
 
 def get_message(
-    date: datetime,
-    username: str,
-    quote: str,
-    attendances: Optional[Iterable[Attendance]] = None,
+        date: datetime,
+        username: str,
+        quote: str,
+        attendances: Optional[Iterable[Attendance]] = None,
 ) -> str:
     """Returns Slack formatted message
 
@@ -37,8 +37,8 @@ def get_message(
         date.strftime(
             "%m월 %d일 출근시간은 한국시각기준 %H시 %M분입니다.".encode("unicode-escape").decode()
         )
-        .encode()
-        .decode("unicode-escape")
+            .encode()
+            .decode("unicode-escape")
     )
 
     if attendances:
@@ -99,26 +99,21 @@ def attend():
     now = datetime.datetime.utcnow()
     kr_time: datetime.datetime = utc.localize(now).astimezone(KST)
 
-    text = request.form.get("text")
+    user_id = request.form.get("user_id")
+    user_name = request.form.get("user_name")
 
-    attendances = None
+    u: Optional[User] = User.query.filter(User.id == user_id).first()
 
-    if text == "test":
-        user_id = request.form.get("user_id")
-        user_name = request.form.get("user_name")
-
-        u: Optional[User] = User.query.filter(User.id == user_id).first()
-
-        if u is None:
-            u = User(id=user_id, username=user_name)
-            db.session.add(u)
-            db.session.commit()
-
-        a = Attendance(timestamp=kr_time, user_id=user_id)
-        db.session.add(a)
+    if u is None:
+        u = User(id=user_id, username=user_name)
+        db.session.add(u)
         db.session.commit()
 
-        attendances = Attendance.get_earliest_n(5, kr_time.date())
+    a = Attendance(timestamp=kr_time, user_id=user_id)
+    db.session.add(a)
+    db.session.commit()
+
+    attendances = Attendance.get_earliest_n(5, kr_time.date())
 
     msg = {
         "response_type": "in_channel",

@@ -28,22 +28,12 @@ def client():
 
 
 def test_attend(client):
-    """POST /attend should return 출석체크"""
-    rv = client.post(ATTEND, data=dict(user_name="kkweon", channel_name="attend"))
-
-    data = json.loads(rv.data)
-
-    assert "in_channel" == data["response_type"]
-    assert "*kkweon님 출석체크*" in data["text"]
-
-
-def test_attend_test(client):
     beg = datetime.datetime.now()
 
     rv = client.post(
         ATTEND,
         data=dict(
-            text="test", user_id="1234", user_name="kkweon", channel_name="attend"
+            user_id="1234", user_name="kkweon", channel_name="attend"
         ),
     )
 
