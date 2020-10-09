@@ -1,13 +1,13 @@
-from datetime import datetime
 import logging
 import random
+from datetime import datetime
 from typing import Iterable, Optional
 
-from flask import request, jsonify
+from flask import jsonify, request
 from pytz import utc
 
-from slack_bot import app, supported_channels, KST, db, lines
-from slack_bot.models import User, Attendance
+from slack_bot import KST, app, db, lines, supported_channels
+from slack_bot.models import Attendance, User
 
 NEWLINE = "\n"
 
@@ -112,7 +112,7 @@ def attend():
     db.session.add(a)
     db.session.commit()
 
-    base_time = datetime.combine(kr_time.date(), datetime.min.time())
+    base_time = kr_time.replace(hour=0, minute=0, second=0, microsecond=0)
 
     attendances = Attendance.get_earliest_n(5, base_time)
 

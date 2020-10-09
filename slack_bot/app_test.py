@@ -10,8 +10,8 @@ import werkzeug.test
 
 from slack_bot import app, db
 from slack_bot.config import TestConfig
-from slack_bot.routes import get_message
 from slack_bot.models import Attendance, User
+from slack_bot.routes import get_message
 
 ATTEND = "/attend"
 

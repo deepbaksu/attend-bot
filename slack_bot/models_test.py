@@ -42,3 +42,13 @@ def test_n(test_db: SQLAlchemy):
 
     ret = Attendance.get_earliest_n(2, base_date + timedelta(days=1))
     assert list(ret) == []
+
+    ###
+    a1_nextday = Attendance(
+        timestamp=dt + timedelta(days=1, seconds=1), user_id=user1.id
+    )
+    test_db.session.add(a1_nextday)
+    test_db.session.commit()
+
+    ret = Attendance.get_earliest_n(2, base_date + timedelta(days=1))
+    assert list(ret) == [a1_nextday]

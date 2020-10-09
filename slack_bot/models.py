@@ -1,13 +1,14 @@
 from __future__ import annotations
-from typing import List, Iterable, Tuple
 
-from sqlalchemy import cast, Date, func
+import datetime
+from typing import Iterable, List, Tuple
+
+import pytz
+from sqlalchemy import Date, cast, func
 from sqlalchemy.orm import load_only
+from sqlalchemy.types import TypeDecorator
 
 from slack_bot import db
-import datetime
-import pytz
-from sqlalchemy.types import TypeDecorator
 
 
 class User(db.Model):

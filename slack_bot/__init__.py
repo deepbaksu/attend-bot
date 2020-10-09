@@ -20,4 +20,4 @@ supported_channels = {"attend", "test-channel-for-bots"}
 with open("slack_bot/saying.txt", encoding="utf-8") as f:
     lines = f.readlines()
 
-from slack_bot import routes, models
+from slack_bot import models, routes
