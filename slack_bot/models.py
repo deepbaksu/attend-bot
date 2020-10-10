@@ -39,19 +39,15 @@ class Attendance(db.Model):
 
     @staticmethod
     def get_earliest_n(n: int, target_date: datetime.datetime) -> Iterable[Attendance]:
-        another_subquery = (
-            Attendance.query.with_entities(Attendance.user_id, Attendance.timestamp)
-            .filter(target_date <= Attendance.timestamp)
-            .filter(Attendance.timestamp < (target_date + datetime.timedelta(days=1)))
-            .subquery()
-        )
 
         subquery = (
-            db.session.query(
-                another_subquery.c.user_id,
-                func.min(another_subquery.c.timestamp).label("min_timestamp"),
+            Attendance.query.with_entities(
+                Attendance.user_id,
+                func.min(Attendance.timestamp).label("min_timestamp"),
             )
-            .group_by(another_subquery.c.user_id)
+            .filter(target_date <= Attendance.timestamp)
+            .filter(Attendance.timestamp < (target_date + datetime.timedelta(days=1)))
+            .group_by(Attendance.user_id)
             .order_by("min_timestamp")
             .limit(n)
             .subquery()
