@@ -45,6 +45,7 @@ def get_message(
         attendance_list = []
 
         for idx, att in enumerate(attendances):
+            print(att)
             attendance_list.append(
                 f"{idx + 1}. {att.user.username} {att.timestamp.astimezone(KST).strftime('%I:%M %p')}"
             )
@@ -97,6 +98,7 @@ def attend():
         return f"출석체크는 다음 채널에서만 사용 가능합니다: {get_channel_names(supported_channels)}"
 
     kr_time: datetime = datetime.now().astimezone(KST)
+    print("kr_time = ", kr_time)
 
     user_id = request.form.get("user_id")
     user_name = request.form.get("user_name")

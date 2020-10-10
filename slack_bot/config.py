@@ -7,5 +7,5 @@ class Config(object):
 
 
 class TestConfig(object):
-    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:password@0.0.0.0/postgres"
     SQLALCHEMY_TRACK_MODIFICATIONS = False

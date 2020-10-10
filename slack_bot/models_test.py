@@ -32,7 +32,7 @@ def test_n(test_db: SQLAlchemy):
     test_db.session.add_all([a1, a1_2, a2])
     test_db.session.commit()
 
-    base_date = datetime.combine(dt.date(), datetime.min.time())
+    base_date = dt.replace(hour=0, minute=0, second=0, microsecond=0)
 
     ret = Attendance.get_earliest_n(1, base_date)
     assert list(ret) == [a1_2]

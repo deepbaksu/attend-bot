@@ -29,7 +29,9 @@ def client():
 
 
 def test_attend_midnight(client, mocker):
-    day1 = datetime.datetime(2020, 1, 1, tzinfo=KST)
+    day1 = KST.localize(
+        datetime.datetime(2020, 1, 1, hour=1, minute=1, second=0, microsecond=0)
+    )
 
     mocked_datetime = mocker.patch("slack_bot.routes.datetime")
     mocked_datetime.now.return_value = day1
@@ -39,11 +41,29 @@ def test_attend_midnight(client, mocker):
     )
     data = json.loads(response.data)
 
-    assert (
-        f"""출석 순위
-1. kkweon 00:00 AM"""
-        in data["text"]
+    assert mocked_datetime.now.has_been_called()
+    assert """1. kkweon 01:01 AM""" in data["text"]
+
+    day2 = day1 + datetime.timedelta(days=1)
+    mocked_datetime.now.return_value = day2
+
+    response = client.post(
+        ATTEND, data=dict(user_id="1235", user_name="dragon", channel_name="attend")
     )
+    data = json.loads(response.data)
+
+    assert mocked_datetime.now.has_been_called()
+    assert "1. dragon 01:01 AM" in data["text"]
+
+    mocked_datetime.now.return_value = day2 + datetime.timedelta(hours=1)
+
+    response = client.post(
+        ATTEND, data=dict(user_id="1234", user_name="kkweon", channel_name="attend")
+    )
+    data = json.loads(response.data)
+
+    assert mocked_datetime.now.has_been_called()
+    assert "2. kkweon 02:01 AM" in data["text"]
 
 
 def test_attend(client, mocker):
@@ -72,7 +92,7 @@ def test_attend(client, mocker):
     a: Attendance = attendances[0]
 
     assert a.user == user
-    assert a.timestamp.replace(tzinfo=KST) == datetime.datetime(
+    assert a.timestamp == datetime.datetime(
         2020, 1, 1, hour=0, minute=0, second=0, tzinfo=KST
     )
 
