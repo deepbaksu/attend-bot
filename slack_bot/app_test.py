@@ -8,7 +8,7 @@ import pytest
 import pytz
 import werkzeug.test
 
-from slack_bot import app, db
+from slack_bot import KST, app, db
 from slack_bot.config import TestConfig
 from slack_bot.models import Attendance, User
 from slack_bot.routes import get_message
@@ -28,8 +28,29 @@ def client():
         yield client
 
 
-def test_attend(client):
-    beg = datetime.datetime.now()
+def test_attend_midnight(client, mocker):
+    day1 = datetime.datetime(2020, 1, 1, tzinfo=KST)
+
+    mocked_datetime = mocker.patch("slack_bot.routes.datetime")
+    mocked_datetime.now.return_value = day1
+
+    response = client.post(
+        ATTEND, data=dict(user_id="1234", user_name="kkweon", channel_name="attend")
+    )
+    data = json.loads(response.data)
+
+    assert (
+        f"""출석 순위
+1. kkweon 00:00 AM"""
+        in data["text"]
+    )
+
+
+def test_attend(client, mocker):
+    mocked_datetime = mocker.patch("slack_bot.routes.datetime")
+    mocked_datetime.now.return_value = datetime.datetime(
+        2020, 1, 1, hour=0, minute=0, second=0, tzinfo=KST
+    )
 
     rv = client.post(
         ATTEND, data=dict(user_id="1234", user_name="kkweon", channel_name="attend"),
@@ -38,7 +59,7 @@ def test_attend(client):
     data = json.loads(rv.data)
 
     assert "in_channel" == data["response_type"]
-    assert "*kkweon님 출석체크*" in data["text"]
+    assert "kkweon님 출석체크*" in data["text"]
 
     user = User.query.filter(User.id == "1234").first()
     assert user is not None
@@ -51,7 +72,9 @@ def test_attend(client):
     a: Attendance = attendances[0]
 
     assert a.user == user
-    assert a.timestamp > beg
+    assert a.timestamp.replace(tzinfo=KST) == datetime.datetime(
+        2020, 1, 1, hour=0, minute=0, second=0, tzinfo=KST
+    )
 
 
 def test_attend_with_wrong_channel(client):
