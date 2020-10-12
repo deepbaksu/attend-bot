@@ -3,13 +3,16 @@ import random
 from datetime import datetime
 from typing import Iterable, Optional
 
-from flask import jsonify, request
+from flask import current_app, jsonify, request
+from flask.blueprints import Blueprint
 from pytz import utc
 
-from slack_bot import KST, app, db, lines, supported_channels
+from slack_bot import KST, db, lines, supported_channels
 from slack_bot.models import Attendance, User
 
 NEWLINE = "\n"
+
+api = Blueprint("api", __name__)
 
 
 def get_message(
@@ -45,7 +48,6 @@ def get_message(
         attendance_list = []
 
         for idx, att in enumerate(attendances):
-            print(att)
             attendance_list.append(
                 f"{idx + 1}. {att.user.username} {att.timestamp.astimezone(KST).strftime('%I:%M %p')}"
             )
@@ -66,7 +68,7 @@ def get_message(
 """
 
 
-@app.route("/healthcheck", methods=["GET"])
+@api.route("/healthcheck", methods=["GET"])
 def healthcheck():
     return "ok"
 
@@ -86,19 +88,19 @@ def get_channel_names(channel_names: Iterable[str]) -> str:
     return ", ".join(map(lambda name: f"#{name}", channel_names))
 
 
-@app.route("/attend", methods=["POST"])
+@api.route("/attend", methods=["POST"])
 def attend():
-    logging.info("Received request.form = %s", request.form)
+    current_app.logger.info("Received request.form = %s", request.form)
+    current_app.logger.info("Headers\n%s", request.headers)
 
     channel_name = request.form.get("channel_name")
 
-    app.logger.info(channel_name)
+    current_app.logger.info(channel_name)
 
     if channel_name not in supported_channels:
         return f"출석체크는 다음 채널에서만 사용 가능합니다: {get_channel_names(supported_channels)}"
 
     kr_time: datetime = datetime.now().astimezone(KST)
-    print("kr_time = ", kr_time)
 
     user_id = request.form.get("user_id")
     user_name = request.form.get("user_name")

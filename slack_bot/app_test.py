@@ -8,7 +8,7 @@ import pytest
 import pytz
 import werkzeug.test
 
-from slack_bot import KST, app, db
+from slack_bot import KST, create_app, db
 from slack_bot.config import TestConfig
 from slack_bot.models import Attendance, User
 from slack_bot.routes import get_message
@@ -18,11 +18,12 @@ ATTEND = "/attend"
 
 @pytest.fixture
 def client():
-    app.config.from_object(TestConfig)
+    app = create_app("development")
     app.config["TESTING"] = True
 
-    db.drop_all()
-    db.create_all()
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
 
     with app.test_client() as client:
         yield client

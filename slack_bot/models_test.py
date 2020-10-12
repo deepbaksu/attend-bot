@@ -4,6 +4,7 @@ import pytest
 import pytz
 from flask_sqlalchemy import SQLAlchemy
 
+from slack_bot import create_app
 from slack_bot.models import Attendance, User
 
 
@@ -11,10 +12,16 @@ from slack_bot.models import Attendance, User
 def test_db():
     from slack_bot import db
 
-    db.drop_all()
-    db.create_all()
+    app = create_app("development")
 
-    return db
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
+
+        yield db
+
+    with app.app_context():
+        db.drop_all()
 
 
 def test_n(test_db: SQLAlchemy):
