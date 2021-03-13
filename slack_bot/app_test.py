@@ -74,7 +74,8 @@ def test_attend(client, mocker):
     )
 
     rv = client.post(
-        ATTEND, data=dict(user_id="1234", user_name="kkweon", channel_name="attend"),
+        ATTEND,
+        data=dict(user_id="1234", user_name="kkweon", channel_name="attend"),
     )
 
     data = json.loads(rv.data)
@@ -111,6 +112,22 @@ def test_healthcheck(client: werkzeug.test.Client):
     rv = client.get("/healthcheck")
     assert 200 == rv.status_code
     assert b"ok" == rv.data
+
+
+def test_subscribe(client: werkzeug.test.Client):
+    """Tests handling Slack Event Subscription"""
+    rv = client.post(
+        "/subscribe",
+        json={
+            "token": "Jhj5dZrVaK7ZwHHjRyZWjbDl",
+            "challenge": "my-challenge",
+            "type": "url_verification",
+        },
+    )
+
+    assert 200 == rv.status_code
+    assert "text/plain" in rv.headers["Content-Type"]
+    assert b"my-challenge" == rv.data
 
 
 def test_get_message():
