@@ -1,9 +1,8 @@
-import logging
 import random
 from datetime import datetime
 from typing import Iterable, Optional
 
-from flask import current_app, jsonify, request
+from flask import current_app, jsonify, make_response, request
 from flask.blueprints import Blueprint
 from pytz import utc
 
@@ -130,6 +129,19 @@ def attend():
         ),
     }
 
-    logging.info("Sending a response back %s", msg)
+    current_app.logger.info("Sending a response back %s", msg)
 
     return jsonify(msg)
+
+
+@api.route("/subscribe", methods=["POST"])
+def subscribe():
+    """Handles Slack Event Subscriptions"""
+    data = request.get_json()
+
+    if data and data.get("type", None) == "url_verification":
+        resp = make_response(data.get("challenge"), 200)
+        resp.mimetype = "text/plain"
+        return resp
+
+    return "ok"

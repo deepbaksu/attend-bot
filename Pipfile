@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 pytest = "*"
 pytest-mock = "*"
+black = "*"
 
 [packages]
 gunicorn = "*"
@@ -20,4 +21,4 @@ flask-migrate = "*"
 python_version = "3.8"
 
 [scripts]
-start = ["FLASK_APP=main.py", "FLASK_ENV=development", "flask", "run"]
+start = "bash ./run_devserver.sh"

@@ -28,7 +28,10 @@ def upgrade():
         sa.Column("id", sa.Integer(), autoincrement=True, nullable=False),
         sa.Column("timestamp", sa.TIMESTAMP(timezone=True), nullable=False),
         sa.Column("user_id", sa.String(), nullable=False),
-        sa.ForeignKeyConstraint(["user_id"], ["users.id"],),
+        sa.ForeignKeyConstraint(
+            ["user_id"],
+            ["users.id"],
+        ),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index(

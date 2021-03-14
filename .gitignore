@@ -3,3 +3,4 @@ pythonenv3.8/
 __pycache__
 .env
 .idea
+.vim
