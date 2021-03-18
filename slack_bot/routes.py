@@ -139,6 +139,8 @@ def subscribe():
     """Handles Slack Event Subscriptions"""
     data = request.get_json()
 
+    current_app.logger.info("/subscribe is called. data = %s", data)
+
     if data and data.get("type", None) == "url_verification":
         resp = make_response(data.get("challenge"), 200)
         resp.mimetype = "text/plain"
