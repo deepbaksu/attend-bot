@@ -27,7 +27,7 @@ jobs:
       - uses: dschep/install-pipenv-action@v1
       - run: pipenv install --dev
       - run: pipenv run pytest
-      
+
       - if: github.ref == 'refs/heads/main'
         uses: AkhileshNS/heroku-deploy@v3.12.12
         with:
