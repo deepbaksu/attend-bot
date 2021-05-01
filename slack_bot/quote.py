@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List
 
 import yaml
 
@@ -33,3 +34,11 @@ class Quote(yaml.YAMLObject):
 
     def print_meta(self) -> str:
         return "- " + ", ".join([self.author, self.title])
+
+
+def load_quotes() -> List[Quote]:
+    data = []
+    with open("slack_bot/saying.yaml", "r") as f:
+        for q_dict in yaml.safe_load(f):
+            data.append(Quote.from_dict(q_dict))
+    return data

@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from pytz import timezone
 
 from slack_bot.config import Config, TestConfig
-from slack_bot.quote import Quote
+from slack_bot.quote import Quote, load_quotes
 
 logging.basicConfig(level=logging.INFO)
 
@@ -38,11 +38,7 @@ def create_app(environment: Optional[str]) -> flask.Flask:
 
 supported_channels = {"attend", "test-channel-for-bots"}
 
-with open("slack_bot/saying.yaml", encoding="utf-8") as f:
-    quotes = []
-    for q_dict in yaml.safe_load(f):
-        quotes.append(Quote.from_dict(q_dict))
-
-    assert len(quotes) > 1, "There should be more than 1 quote but found only 1 quote"
+quotes = load_quotes()
+assert len(quotes) > 1, "There should be more than 1 quote but found only 1 quote"
 
 from slack_bot import models, routes
