@@ -6,7 +6,7 @@ from flask import current_app, jsonify, make_response, request
 from flask.blueprints import Blueprint
 from pytz import utc
 
-from slack_bot import KST, db, lines, supported_channels
+from slack_bot import KST, db, quotes, supported_channels
 from slack_bot.models import Attendance, User
 
 NEWLINE = "\n"
@@ -124,7 +124,7 @@ def attend():
         "text": get_message(
             kr_time,
             request.form.get("user_name"),
-            random.choice(lines),
+            random.choice(quotes).to_message(),
             attendances=attendances,
         ),
     }
