@@ -2,12 +2,14 @@ import logging
 from typing import Optional
 
 import flask
+import yaml
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from pytz import timezone
 
 from slack_bot.config import Config, TestConfig
+from slack_bot.quote import Quote, load_quotes
 
 logging.basicConfig(level=logging.INFO)
 
@@ -25,7 +27,7 @@ def create_app(environment: Optional[str]) -> flask.Flask:
         app.config.from_object(TestConfig)
 
     db.init_app(app)
-    migrate = Migrate(app, db)
+    Migrate(app, db)
 
     from slack_bot import routes
 
@@ -36,7 +38,7 @@ def create_app(environment: Optional[str]) -> flask.Flask:
 
 supported_channels = {"attend", "test-channel-for-bots"}
 
-with open("slack_bot/saying.txt", encoding="utf-8") as f:
-    lines = f.readlines()
+quotes = load_quotes()
+assert len(quotes) > 1, "There should be more than 1 quote but found only 1 quote"
 
 from slack_bot import models, routes

@@ -1,12 +1,9 @@
 from __future__ import annotations
 
 import datetime
-from typing import Iterable, List, Tuple
+from typing import Iterable
 
-import pytz
-from sqlalchemy import Date, cast, func
-from sqlalchemy.orm import load_only
-from sqlalchemy.types import TypeDecorator
+from sqlalchemy import func
 
 from slack_bot import db
 
@@ -39,7 +36,6 @@ class Attendance(db.Model):
 
     @staticmethod
     def get_earliest_n(n: int, target_date: datetime.datetime) -> Iterable[Attendance]:
-
         subquery = (
             Attendance.query.with_entities(
                 Attendance.user_id,
