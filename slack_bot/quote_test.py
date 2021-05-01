@@ -11,6 +11,24 @@ def test_quote():
     )
 
 
+def test_quote_without_title():
+    quote = Quote(quote="a yo quote hey", author="Author here")
+    assert (
+        quote.to_message()
+        == f"""a yo quote hey
+- Author here"""
+    )
+
+
+def test_quote_without_author():
+    quote = Quote(quote="a yo quote hey", title="title")
+    assert (
+        quote.to_message()
+        == f"""a yo quote hey
+- title"""
+    )
+
+
 def test_load_quotes():
     quotes = load_quotes()
     assert len(quotes) > 0

@@ -33,6 +33,12 @@ class Quote(yaml.YAMLObject):
 {self.print_meta()}"""
 
     def print_meta(self) -> str:
+        if self.title == "":
+            return f"- {self.author}"
+
+        if self.author == "":
+            return f"- {self.title}"
+
         return "- " + ", ".join([self.author, self.title])
 
 
