@@ -180,7 +180,7 @@ def attend():
 
     attendances = Attendance.get_earliest_n(5, base_time)
 
-    if text.startswith("block"):
+    if text and text.startswith("block"):
         return block_handler(
             username=user_name,
             kr_datetime=kr_time,
