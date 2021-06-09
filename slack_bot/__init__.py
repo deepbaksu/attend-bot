@@ -2,7 +2,6 @@ import logging
 from typing import Optional
 
 import flask
-import yaml
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -16,9 +15,13 @@ logging.basicConfig(level=logging.INFO)
 KST = timezone("Asia/Seoul")
 db = SQLAlchemy()
 
+supported_channels = {"attend", "test-channel-for-bots"}
+
+quotes = load_quotes()
+assert len(quotes) > 1, "There should be more than 1 quote but found only 1 quote"
+
 
 def create_app(environment: Optional[str]) -> flask.Flask:
-
     app = Flask(__name__)
 
     if environment == "production":
@@ -34,11 +37,3 @@ def create_app(environment: Optional[str]) -> flask.Flask:
     app.register_blueprint(routes.api, url_prefix="/")
 
     return app
-
-
-supported_channels = {"attend", "test-channel-for-bots"}
-
-quotes = load_quotes()
-assert len(quotes) > 1, "There should be more than 1 quote but found only 1 quote"
-
-from slack_bot import models, routes

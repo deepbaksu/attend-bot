@@ -18,6 +18,25 @@ class User(db.Model):
         return "User(id=%r, username=%r)" % (self.id, self.username)
 
 
+class QuoteRating(db.Model):
+    __tablename__ = "quote_ratings"
+
+    quote_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String, db.ForeignKey("users.id"), nullable=False)
+    rate = db.Column(db.Integer, nullable=False)
+    timestamp = db.Column(db.TIMESTAMP(timezone=True), index=True, nullable=False)
+
+    user = db.relationship("User")
+
+    def __repr__(self):
+        return "QuoteRating(quote_id=%r, user_id=%r, rate=%r, timestamp=%r)" % (
+            self.quote_id,
+            self.user_id,
+            self.rate,
+            self.timestamp,
+        )
+
+
 class Attendance(db.Model):
     __tablename__ = "attendances"
 

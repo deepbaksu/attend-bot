@@ -8,10 +8,12 @@ import pytest
 import pytz
 import werkzeug.test
 
-from slack_bot import KST, create_app, db
+from slack_bot import KST, Quote, create_app, db
 from slack_bot.config import TestConfig
 from slack_bot.models import Attendance, User
 from slack_bot.routes import get_message
+
+ROUTES_DATETIME = "slack_bot.routes.datetime"
 
 ATTEND = "/attend"
 
@@ -34,7 +36,7 @@ def test_attend_midnight(client, mocker):
         datetime.datetime(2020, 1, 1, hour=1, minute=1, second=0, microsecond=0)
     )
 
-    mocked_datetime = mocker.patch("slack_bot.routes.datetime")
+    mocked_datetime = mocker.patch(ROUTES_DATETIME)
     mocked_datetime.now.return_value = day1
 
     response = client.post(
@@ -68,7 +70,7 @@ def test_attend_midnight(client, mocker):
 
 
 def test_attend(client, mocker):
-    mocked_datetime = mocker.patch("slack_bot.routes.datetime")
+    mocked_datetime = mocker.patch(ROUTES_DATETIME)
     mocked_datetime.now.return_value = datetime.datetime(
         2020, 1, 1, hour=0, minute=0, second=0, tzinfo=KST
     )
@@ -97,6 +99,69 @@ def test_attend(client, mocker):
     assert a.timestamp == datetime.datetime(
         2020, 1, 1, hour=0, minute=0, second=0, tzinfo=KST
     )
+
+
+def test_attend_block(client, mocker):
+    mocked_datetime = mocker.patch(ROUTES_DATETIME)
+    mocked_datetime.now.return_value = KST.localize(
+        datetime.datetime(year=2020, month=1, day=2, hour=3, minute=4, second=5)
+    )
+
+    mocked_random = mocker.patch("slack_bot.routes.random")
+    mocked_random.randint.return_value = 4
+
+    rv = client.post(
+        ATTEND,
+        data=dict(
+            user_id="1234", text="block", user_name="kkweon", channel_name="attend"
+        ),
+    )
+
+    data = json.loads(rv.data)
+    expected = {
+        "blocks": [
+            {
+                "type": "header",
+                "text": {"type": "plain_text", "text": "kkweon님 출석체크", "emoji": True},
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "plain_text",
+                    "text": "01월 02일 출근시간은 한국시각기준 03시 04분입니다.",
+                    "emoji": True,
+                },
+            },
+            {"type": "divider"},
+            {"type": "section", "text": {"type": "mrkdwn", "text": "*출석 순위 :rocket:*"}},
+            {
+                "type": "section",
+                "text": {"type": "mrkdwn", "text": "1. kkweon 03:04 AM"},
+            },
+            {"type": "divider"},
+            {
+                "type": "section",
+                "text": {"type": "mrkdwn", "text": "> 자존심은 어리석은 자의 소유물이다.\n> - 헤로도토스"},
+            },
+            {
+                "type": "actions",
+                "elements": [
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "좋아요 :+1:",
+                            "emoji": True,
+                        },
+                        "value": "4",
+                        "action_id": "like_quote",
+                    }
+                ],
+            },
+        ]
+    }
+
+    assert data["blocks"] == expected["blocks"]
 
 
 def test_attend_with_wrong_channel(client):
