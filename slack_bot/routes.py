@@ -224,46 +224,38 @@ def subscribe():
 
     if data and data.get("type", None) == "block_actions":
 
-        @after_this_request
-        def handle_block_actions(response: flask.Response):
-            @response.call_on_close
-            def do():
-                user = data["user"]
+        user = data["user"]
 
-                username = user["username"]
-                user_id = user["id"]
+        username = user["username"]
+        user_id = user["id"]
 
-                user = User.query.get(user_id)
+        user = User.query.get(user_id)
 
-                if user is None:
-                    user = User(id=user_id, username=username)
-                    db.session.add(user)
-                    db.session.commit()
+        if user is None:
+            user = User(id=user_id, username=username)
+            db.session.add(user)
+            db.session.commit()
 
-                response_url = data["response_url"]
+        response_url = data["response_url"]
 
-                actions = data.get("actions", [])
+        actions = data.get("actions", [])
 
-                for action in actions:
-                    if action["action_id"] == "like_quote":
-                        quote_id = int(action["value"])
-                        action_ts, action_us = map(int, action["action_ts"].split("."))
-                        ts = datetime.utcfromtimestamp(action_ts) + timedelta(
-                            microseconds=action_us
-                        )
+        for action in actions:
+            if action["action_id"] == "like_quote":
+                quote_id = int(action["value"])
+                action_ts, action_us = map(int, action["action_ts"].split("."))
+                ts = datetime.utcfromtimestamp(action_ts) + timedelta(
+                    microseconds=action_us
+                )
 
-                        LIKE = 1
-                        quote = QuoteRating(
-                            quote_id=quote_id, user_id=user_id, rate=LIKE, timestamp=ts
-                        )
-                        db.session.add(quote)
-                        db.session.commit()
+                LIKE = 1
+                quote = QuoteRating(
+                    quote_id=quote_id, user_id=user_id, rate=LIKE, timestamp=ts
+                )
+                db.session.add(quote)
+                db.session.commit()
 
-                        requests.post(
-                            response_url, json=dict(text=f"{username}님 피드백 감사합니다!")
-                        )
-
-            return response
+                requests.post(response_url, json=dict(text=f"{username}님 피드백 감사합니다!"))
 
         return "ok"
 
