@@ -1,3 +1,4 @@
+import json
 import random
 import threading
 from datetime import datetime, timedelta
@@ -206,7 +207,13 @@ def attend():
 @api.route("/subscribe", methods=["POST"])
 def subscribe():
     """Handles Slack Event Subscriptions"""
+
+    # Event subscription challenge uses JSON
     data = request.get_json()
+
+    if data is None:
+        # Block Kit interaction uses Form data. WTF Slack?
+        data = json.loads(request.form["payload"])
 
     current_app.logger.info("/subscribe is called. data = %s", data)
 

@@ -1,3 +1,5 @@
+import json
+
 import flask.testing
 import pytest
 import pytest_mock
@@ -59,7 +61,7 @@ def test_handle_block_actions(
         ],
     }
 
-    resp = client.post("/subscribe", json=data)
+    resp = client.post("/subscribe", data=dict(payload=json.dumps(data)))
     resp.close()
     assert b"ok" == resp.data
     mocked_request.assert_called_once_with(
