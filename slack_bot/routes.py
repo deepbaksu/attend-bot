@@ -255,7 +255,10 @@ def subscribe():
                 db.session.add(quote)
                 db.session.commit()
 
-                requests.post(response_url, json=dict(text=f"{username}님 피드백 감사합니다!"))
+                requests.post(
+                    response_url,
+                    json=dict(text=f"{username}님 피드백 감사합니다!", replace_original=False),
+                )
 
         return "ok"
 

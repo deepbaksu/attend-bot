@@ -65,5 +65,5 @@ def test_handle_block_actions(
     resp.close()
     assert b"ok" == resp.data
     mocked_request.assert_called_once_with(
-        response_url, json={"text": "kkweon님 피드백 감사합니다!"}
+        response_url, json={"text": "kkweon님 피드백 감사합니다!", "replace_original": False}
     )
