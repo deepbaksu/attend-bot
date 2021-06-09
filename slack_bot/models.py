@@ -21,8 +21,11 @@ class User(db.Model):
 class QuoteRating(db.Model):
     __tablename__ = "quote_ratings"
 
-    quote_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String, db.ForeignKey("users.id"), nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    quote_id = db.Column(db.Integer, index=True, nullable=False)
+    user_id = db.Column(
+        db.String, db.ForeignKey("users.id"), index=True, nullable=False
+    )
     rate = db.Column(db.Integer, nullable=False)
     timestamp = db.Column(db.TIMESTAMP(timezone=True), index=True, nullable=False)
 
