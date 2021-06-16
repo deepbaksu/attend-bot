@@ -181,27 +181,12 @@ def attend():
 
     attendances = Attendance.get_earliest_n(5, base_time)
 
-    if text and text.startswith("block"):
-        return block_handler(
-            username=user_name,
-            kr_datetime=kr_time,
-            quote_id=random.randint(0, len(quotes)),
-            attendances=attendances,
-        )
-
-    msg = {
-        "response_type": "in_channel",
-        "text": get_message(
-            kr_time,
-            user_name,
-            random.choice(quotes).to_message(),
-            attendances=attendances,
-        ),
-    }
-
-    current_app.logger.info("Sending a response back %s", msg)
-
-    return jsonify(msg)
+    return block_handler(
+        username=user_name,
+        kr_datetime=kr_time,
+        quote_id=random.randint(0, len(quotes)),
+        attendances=attendances,
+    )
 
 
 @api.route("/subscribe", methods=["POST"])

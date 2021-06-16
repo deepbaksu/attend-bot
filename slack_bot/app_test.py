@@ -42,10 +42,9 @@ def test_attend_midnight(client, mocker):
     response = client.post(
         ATTEND, data=dict(user_id="1234", user_name="kkweon", channel_name="attend")
     )
-    data = json.loads(response.data)
 
     assert mocked_datetime.now.has_been_called()
-    assert """1. kkweon 01:01 AM""" in data["text"]
+    assert b"1. kkweon 01:01 AM" in response.data
 
     day2 = day1 + datetime.timedelta(days=1)
     mocked_datetime.now.return_value = day2
@@ -53,20 +52,18 @@ def test_attend_midnight(client, mocker):
     response = client.post(
         ATTEND, data=dict(user_id="1235", user_name="dragon", channel_name="attend")
     )
-    data = json.loads(response.data)
 
     assert mocked_datetime.now.has_been_called()
-    assert "1. dragon 01:01 AM" in data["text"]
+    assert b"1. dragon 01:01 AM" in response.data
 
     mocked_datetime.now.return_value = day2 + datetime.timedelta(hours=1)
 
     response = client.post(
         ATTEND, data=dict(user_id="1234", user_name="kkweon", channel_name="attend")
     )
-    data = json.loads(response.data)
 
     assert mocked_datetime.now.has_been_called()
-    assert "2. kkweon 02:01 AM" in data["text"]
+    assert b"2. kkweon 02:01 AM" in response.data
 
 
 def test_attend(client, mocker):
@@ -83,7 +80,7 @@ def test_attend(client, mocker):
     data = json.loads(rv.data)
 
     assert "in_channel" == data["response_type"]
-    assert "kkweon님 출석체크*" in data["text"]
+    assert "kkweon님 출석체크" in data["blocks"][0]["text"]["text"]
 
     user = User.query.filter(User.id == "1234").first()
     assert user is not None
@@ -112,9 +109,7 @@ def test_attend_block(client, mocker):
 
     rv = client.post(
         ATTEND,
-        data=dict(
-            user_id="1234", text="block", user_name="kkweon", channel_name="attend"
-        ),
+        data=dict(user_id="1234", user_name="kkweon", channel_name="attend"),
     )
 
     data = json.loads(rv.data)
