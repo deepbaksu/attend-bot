@@ -1,0 +1,24 @@
+{
+  "name": "attend-bot",
+  "version": "1.0.0",
+  "description": "![CI](https://github.com/deepbaksu/attend-bot/workflows/CI/badge.svg)\r ![Website](https://img.shields.io/website?down_message=bot%20is%20offline&up_message=bot%20is%20online&url=https%3A%2F%2Fslackattend.herokuapp.com%2Fhealthcheck)",
+  "main": "index.js",
+  "scripts": {
+    "test": "prettier --check {**/*,*}.{yaml,yml,json}",
+    "format": "prettier --write {**/*,*}.{yaml,yml,json}"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deepbaksu/attend-bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/deepbaksu/attend-bot/issues"
+  },
+  "homepage": "https://github.com/deepbaksu/attend-bot#readme",
+  "devDependencies": {
+    "prettier": "^2.3.2"
+  }
+}
