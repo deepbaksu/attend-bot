@@ -5,3 +5,4 @@ __pycache__
 .idea
 .vim
 .venv/
+node_modules/
