@@ -1,0 +1,8 @@
+pull_request_rules:
+  - name: Automatic merge
+    conditions:
+      - "#files=1"
+      - "files=slack_bot/saying.yaml"
+    actions:
+      merge:
+        method: merge
