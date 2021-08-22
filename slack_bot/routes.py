@@ -129,7 +129,7 @@ def block_handler(
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": f"> {quote.quote}\n> {quote.print_meta()}",
+                "text": f">{quote.quote}\n>{quote.print_meta()}",
             },
         },
         {

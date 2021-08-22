@@ -136,7 +136,7 @@ def test_attend_block(client, mocker):
             {"type": "divider"},
             {
                 "type": "section",
-                "text": {"type": "mrkdwn", "text": "> 자존심은 어리석은 자의 소유물이다.\n> - 헤로도토스"},
+                "text": {"type": "mrkdwn", "text": ">자존심은 어리석은 자의 소유물이다.\n>- 헤로도토스"},
             },
             {
                 "type": "actions",
