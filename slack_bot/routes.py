@@ -1,70 +1,18 @@
 import json
 import random
-import threading
 from datetime import datetime, timedelta
 from typing import Iterable, List, Optional
 
-import flask
 import requests
-from flask import (after_this_request, current_app, jsonify, make_response,
-                   request)
+from flask import current_app, jsonify, make_response, request
 from flask.blueprints import Blueprint
-from pytz import utc
 
-from slack_bot import KST, Quote, db, quotes, supported_channels
+from slack_bot import KST, db, quotes, supported_channels
 from slack_bot.models import Attendance, QuoteRating, User
 
 NEWLINE = "\n"
 
 api = Blueprint("api", __name__)
-
-
-def get_message(
-    date: datetime,
-    username: str,
-    quote: str,
-    attendances: Optional[Iterable[Attendance]] = None,
-) -> str:
-    """Returns Slack formatted message
-
-    Args:
-        date: Datetime object where 출첵 is done.
-        username: Username
-        quote: 맨 마지막에 추가할 인용 문구
-
-    Returns:
-        A message sent to the user
-        :param attendances:
-    """
-    # 윈도우에서는 strftime을 이용하여 날짜형태를 변경하고 한글을 결합할 경우
-    # UnicodeEncodeError 및 Invalid format string 오류가 발생할 수 있습니다.
-    # Korean + time.strftime() 문제해결을 위해 다음의 링크를 참고하였습니다.
-    # https://hcid-courses.github.io/TA/QnA/issues_with_windows_korean_strftime.html
-    datetime_msg = (
-        date.strftime(
-            "%m월 %d일 출근시간은 한국시각기준 %H시 %M분입니다.".encode("unicode-escape").decode()
-        )
-        .encode()
-        .decode("unicode-escape")
-    )
-
-    if attendances:
-        attendance_messages = get_attendances_messages(attendances)
-
-        return f"""*{username}님 출석체크*
-{datetime_msg}
-
-*출석 순위*
-{NEWLINE.join(attendance_messages)}
-
-{quote}
-"""
-
-    return f"""*{username}님 출석체크*
-{datetime_msg}
-
-{quote}
-"""
 
 
 def get_attendances_messages(attendances) -> List[str]:
@@ -109,7 +57,7 @@ def block_handler(
     block_template = [
         {
             "type": "header",
-            "text": {"type": "plain_text", "text": f"{username}님 출석체크", "emoji": True},
+            "text": {"type": "plain_text", "text": f"@{username}님 출석체크", "emoji": True},
         },
         {
             "type": "section",
@@ -154,7 +102,6 @@ def attend():
     current_app.logger.info("Headers\n%s", request.headers)
 
     channel_name = request.form.get("channel_name")
-    text = request.form.get("text")
 
     current_app.logger.info(channel_name)
 

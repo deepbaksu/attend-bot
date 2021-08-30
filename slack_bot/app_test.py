@@ -1,17 +1,12 @@
 import datetime
 import json
-import os
-import tempfile
 
-import flask
 import pytest
 import pytz
 import werkzeug.test
 
-from slack_bot import KST, Quote, create_app, db
-from slack_bot.config import TestConfig
+from slack_bot import KST, create_app, db
 from slack_bot.models import Attendance, User
-from slack_bot.routes import get_message
 
 ROUTES_DATETIME = "slack_bot.routes.datetime"
 
@@ -117,7 +112,7 @@ def test_attend_block(client, mocker):
         "blocks": [
             {
                 "type": "header",
-                "text": {"type": "plain_text", "text": "kkweon님 출석체크", "emoji": True},
+                "text": {"type": "plain_text", "text": "@kkweon님 출석체크", "emoji": True},
             },
             {
                 "type": "section",
@@ -188,24 +183,3 @@ def test_subscribe(client: werkzeug.test.Client):
     assert 200 == rv.status_code
     assert "text/plain" in rv.headers["Content-Type"]
     assert b"my-challenge" == rv.data
-
-
-def test_get_message():
-    username = "kkweon"
-    date = datetime.datetime(
-        year=2020,
-        month=10,
-        day=1,
-        hour=22,
-        minute=56,
-        tzinfo=pytz.timezone("Asia/Seoul"),
-    )
-    quote = "HELLO"
-
-    assert f"""*kkweon님 출석체크*
-10월 01일 출근시간은 한국시각기준 22시 56분입니다.
-
-HELLO
-""" == get_message(
-        date, username, quote
-    )
