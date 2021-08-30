@@ -75,7 +75,7 @@ def test_attend(client, mocker):
     data = json.loads(rv.data)
 
     assert "in_channel" == data["response_type"]
-    assert "kkweon님 출석체크" in data["blocks"][0]["text"]["text"]
+    assert "<@1234>님 출석체크" in data["blocks"][0]["text"]["text"]
 
     user = User.query.filter(User.id == "1234").first()
     assert user is not None
@@ -112,7 +112,7 @@ def test_attend_block(client, mocker):
         "blocks": [
             {
                 "type": "header",
-                "text": {"type": "plain_text", "text": "@kkweon님 출석체크", "emoji": True},
+                "text": {"type": "plain_text", "text": "<@1234>님 출석체크", "emoji": True},
             },
             {
                 "type": "section",

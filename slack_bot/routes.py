@@ -45,7 +45,7 @@ def get_channel_names(channel_names: Iterable[str]) -> str:
 
 
 def block_handler(
-    username: str,
+    user_id: str,
     kr_datetime: datetime,
     quote_id: int,
     attendances: Iterable[Attendance],
@@ -57,7 +57,11 @@ def block_handler(
     block_template = [
         {
             "type": "header",
-            "text": {"type": "plain_text", "text": f"@{username}님 출석체크", "emoji": True},
+            "text": {
+                "type": "plain_text",
+                "text": f"<@{user_id}>님 출석체크",
+                "emoji": True,
+            },
         },
         {
             "type": "section",
@@ -129,7 +133,7 @@ def attend():
     attendances = Attendance.get_earliest_n(5, base_time)
 
     return block_handler(
-        username=user_name,
+        user_id=user_id,
         kr_datetime=kr_time,
         quote_id=random.randint(0, len(quotes)),
         attendances=attendances,
