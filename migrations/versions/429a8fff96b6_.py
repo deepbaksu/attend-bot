@@ -1,4 +1,5 @@
-"""empty message
+"""
+Create a new table quote_ratings to store user's like on a quote.
 
 Revision ID: 429a8fff96b6
 Revises: 9546f373afd1

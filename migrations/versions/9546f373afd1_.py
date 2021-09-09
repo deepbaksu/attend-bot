@@ -1,7 +1,8 @@
-"""empty message
+"""
+Create 2 tables (users and attendances)
 
 Revision ID: 9546f373afd1
-Revises: 
+Revises:
 Create Date: 2020-10-09 09:21:01.507408
 
 """
