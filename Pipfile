@@ -20,11 +20,12 @@ flask-migrate = "*"
 pyyaml = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"
 
 [scripts]
 start = "bash ./run_devserver.sh"
 format = "black ."
+test = "pytest"
 
 [pipenv]
 allow_prereleases = true
