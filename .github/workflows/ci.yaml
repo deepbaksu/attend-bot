@@ -27,7 +27,7 @@ jobs:
       - run: npm test
       - uses: actions/setup-python@v2
         with:
-          python-version: "3.8"
+          python-version: "3.9"
       - run: pip install -U pipenv
       - run: pipenv install --dev
       - run: pipenv run pytest
